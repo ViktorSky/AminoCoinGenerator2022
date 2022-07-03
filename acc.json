@@ -1,0 +1,12 @@
+[
+  {
+    "email": "example@mail.com",
+    "password": "secret132",
+    "device": "424E4AA68CEE0686BCB795785F62F5ED9570E3E0F5F3D5296AE8AAE5C7E2644AC943007C42B1D15D8C"
+  },
+  {
+    "email": "example2@mail.com",
+    "password": "secret132",
+    "device": "426f4812d48ada112d5cb23c14a17c2a1d20245890dfd4913148db89bc2a580e17fefbcc4e5ae91079"
+  }
+]
