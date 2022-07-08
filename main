@@ -37,7 +37,6 @@ finally:
     from flask import Flask
     from json_minify import json_minify
 
-from threading import Thread
 from uuid import uuid4
 from hashlib import sha1
 
@@ -85,15 +84,17 @@ class Client:
         return f"42{identifier.hex()}{mac.hexdigest()}".upper()
     
     def ws_send(self, data):
-        if self.sid is None: return
-        final = f"{self.device_Id}|{int(time.time() * 1000)}"
-        ndc_msg_sig = self.generate_signature_message(final)
-        headers = {"NDCDEVICEID": self.device_Id, "NDCAUTH": f"sid={self.sid}", "NDC-MSG-SIG": ndc_msg_sig}
-        self.socket = websocket.WebSocketApp(f"{self.socket_url}/?signbody={final.replace('|', '%7C')}", header=headers)
-        self.socket_thread = Thread(target=self.socket.run_forever)
-        self.socket_thread.start()
-        time.sleep(4)
-        self.socket.send(data)
+        try:
+            if self.sid is None: return
+            final = f"{self.device_Id}|{int(time.time() * 1000)}"
+            ndc_msg_sig = self.generate_signature_message(final)
+            headers = {"NDCDEVICEID": self.device_Id, "NDCAUTH": f"sid={self.sid}", "NDC-MSG-SIG": ndc_msg_sig}
+            self.socket = websocket.WebSocketApp(f"{self.socket_url}/?signbody={final.replace('|', '%7C')}", header=headers)
+            self.socket_thread = Thread(target=self.socket.run_forever)
+            self.socket_thread.start()
+            time.sleep(4)
+            self.socket.send(data)
+        except:pass
     
     def login(self, email: str, password: str):
         data = json.dumps({
@@ -152,8 +153,7 @@ class Client:
             "ndcId": int(comId),
             "id": "82333"}, "t":304}
         data = json.dumps(data)
-        try:self.ws_send(data)
-        except:pass
+        Thread(target=self.ws_send,args=(data,).start()
 
 class Config:
     def __init__(self):
